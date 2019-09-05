@@ -18,6 +18,7 @@ import locale
 
 import requests
 import json
+from pykafka import KafkaClient
 
 try:
     locale.setlocale(locale.LC_ALL, 'en_US.utf8')
