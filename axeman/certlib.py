@@ -71,35 +71,35 @@ async def retrieve_log_info(log, session):
         info.update(log)
         return info
 
-async def populate_work(work_deque, log_info, start=0):
+async def populate_work(work_deque, log_info, start=0, end=0):
     tree_size = log_info['tree_size']
     block_size = log_info['block_size']
 
-    total_size = tree_size - 1
+    total_size = end - 1
 
-    end = start + block_size
+    tmpend = start + block_size
 
-    if end > tree_size:
-        end = tree_size
+    if tmpend > tree_size:
+        tmpend = tree_size
 
     chunks = math.ceil((total_size - start) / block_size)
-
+    print(start, end, tmpend, chunks, block_size)
     if chunks == 0:
         raise Exception("No work needed!")
 
     for _ in range(chunks):
         # Cap the end to the last record in the DB
-        if end >= tree_size:
-            end = tree_size - 1
+        if tmpend >= tree_size:
+            tmpend = tree_size - 1
 
-        assert end >= start, "End {} is less than start {}!".format(end, start)
-        assert end < tree_size, "End {} is less than tree_size {}".format(end, tree_size)
+        assert tmpend >= start, "End {} is less than start {}!".format(end, start)
+        assert tmpend < tree_size, "End {} is less than tree_size {}".format(end, tree_size)
 
-        work_deque.append((start, end))
+        work_deque.append((start, tmpend))
 
         start += block_size
 
-        end = start + block_size + 1
+        tmpend = start + block_size + 1
 
 def add_all_domains(cert_data):
     all_domains = []
